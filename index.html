@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Hop Box — World Cup 2026 Sweepstake</title>
+<style>
+  :root{
+    --board:#1c2b24;
+    --board-2:#213328;
+    --chalk:#f4f1e6;
+    --chalk-dim:#c9c6ba;
+    --gold:#e8b94a;
+    --pitch:#3f8a52;
+    --pen-red:#c8433a;
+    --paper:#f6f0e1;
+    --paper-line:#d9d0b8;
+    --ink:#26261f;
+    --ink-dim:#6b6a5f;
+    --shadow: 0 6px 18px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--board);
+    background-image:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,.03), transparent 40%),
+      radial-gradient(circle at 85% 90%, rgba(255,255,255,.025), transparent 45%);
+    color:var(--chalk);
+    font-family:'Zilla Slab', Georgia, 'Times New Roman', serif;
+    line-height:1.4;
+    -webkit-font-smoothing:antialiased;
+  }
+  @font-face{ /* graceful fallback if no network fonts load */ }
+  h1,h2,h3{font-family:'Anton','Oswald',Impact,'Arial Narrow',sans-serif; letter-spacing:.02em; margin:0;}
+  .mono{font-family:'JetBrains Mono','Courier New',monospace;}
+
+  a{color:var(--gold);}
+
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+
+  /* HEADER */
+  header.board-header{
+    padding:44px 0 30px;
+    text-align:center;
+    border-bottom:2px dashed rgba(244,241,230,.18);
+  }
+  header.board-header .eyebrow{
+    text-transform:uppercase;
+    letter-spacing:.28em;
+    font-size:.72rem;
+    color:var(--gold);
+    font-family:'JetBrains Mono','Courier New',monospace;
+    margin-bottom:10px;
+  }
+  header.board-header h1{
+    font-size:clamp(2.1rem, 6vw, 3.6rem);
+    color:var(--chalk);
+    text-shadow: 0 2px 0 rgba(0,0,0,.25);
+  }
+  header.board-header p.sub{
+    color:var(--chalk-dim);
+    margin-top:10px;
+    font-size:1rem;
+    font-style:italic;
+  }
+  .updated-badge{
+    display:inline-block;
+    margin-top:18px;
+    padding:6px 14px;
+    border:1px solid rgba(232,185,74,.5);
+    border-radius:999px;
+    font-family:'JetBrains Mono','Courier New',monospace;
+    font-size:.72rem;
+    color:var(--gold);
+    letter-spacing:.05em;
+  }
+
+  /* CHAMPION BANNER */
+  .champion-banner{
+    margin-top:34px;
+    text-align:center;
+    background:linear-gradient(180deg, rgba(232,185,74,.16), rgba(232,185,74,.05));
+    border:1px solid rgba(232,185,74,.5);
+    border-radius:12px;
+    padding:30px 20px 26px;
+  }
+  .champion-banner[hidden]{display:none;}
+  .champion-banner .trophy{font-size:2.6rem; line-height:1;}
+  .champion-banner .champ-label{
+    text-transform:uppercase; letter-spacing:.3em; font-size:.75rem;
+    color:var(--gold); margin-top:6px; font-family:'JetBrains Mono',monospace;
+  }
+  .champion-banner .champ-team{
+    font-family:'Anton','Oswald',sans-serif;
+    font-size:clamp(1.8rem,5vw,2.8rem);
+    color:var(--chalk); margin-top:4px;
+  }
+  .champion-banner .champ-holder{
+    margin-top:6px; color:var(--chalk-dim); font-style:italic; font-size:1rem;
+  }
+
+  /* PRIZES */
+  section.prizes{padding:38px 0 8px;}
+  .prize-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+  }
+  .ticket{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:6px;
+    padding:16px 14px 14px;
+    position:relative;
+    box-shadow:var(--shadow);
+    transform:rotate(var(--tilt,0deg));
+  }
+  .ticket:nth-child(1){--tilt:-1.1deg;}
+  .ticket:nth-child(2){--tilt:.8deg;}
+  .ticket:nth-child(3){--tilt:-.6deg;}
+  .ticket:nth-child(4){--tilt:1deg;}
+  .ticket::before{
+    content:"";
+    position:absolute; top:-7px; left:50%; transform:translateX(-50%) rotate(-4deg);
+    width:26px; height:14px;
+    background:repeating-linear-gradient(45deg,#8a6d3b,#8a6d3b 3px,#6f5527 3px,#6f5527 6px);
+    border-radius:2px;
+    opacity:.85;
+  }
+  .ticket .place{
+    font-family:'JetBrains Mono','Courier New',monospace;
+    text-transform:uppercase;
+    font-size:.68rem;
+    letter-spacing:.12em;
+    color:var(--ink-dim);
+  }
+  .ticket .amount{
+    font-family:'Anton','Oswald',sans-serif;
+    font-size:1.9rem;
+    color:var(--pen-red);
+    margin:2px 0 4px;
+  }
+  .ticket .stage{
+    font-size:.82rem;
+    color:var(--ink-dim);
+    border-top:1px dashed var(--paper-line);
+    padding-top:6px;
+    margin-top:4px;
+  }
+  .ticket .holder{
+    margin-top:6px;
+    font-weight:700;
+    font-size:.95rem;
+  }
+  .ticket .holder.tbd{color:var(--ink-dim); font-weight:400; font-style:italic;}
+
+  /* SECTION LABELS */
+  .section-label{
+    display:flex; align-items:center; gap:12px;
+    margin:46px 0 18px;
+  }
+  .section-label h2{font-size:1.5rem; color:var(--chalk); white-space:nowrap;}
+  .section-label .rule{flex:1; height:1px; background:repeating-linear-gradient(90deg, rgba(244,241,230,.35) 0 6px, transparent 6px 12px);}
+  .section-label .count{
+    font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--chalk-dim);
+  }
+
+  /* NOTE BANNER */
+  .flag-note{
+    background:rgba(232,185,74,.12);
+    border:1px solid rgba(232,185,74,.45);
+    color:var(--chalk);
+    border-radius:8px;
+    padding:12px 16px;
+    font-size:.88rem;
+    margin-bottom:10px;
+  }
+  .flag-note b{color:var(--gold);}
+
+  /* BRACKET */
+  section.bracket{padding-bottom:10px;}
+  .bracket-scroll{
+    display:flex;
+    gap:34px;
+    overflow-x:auto;
+    padding:10px 4px 26px;
+    scroll-snap-type:x proximity;
+  }
+  .round-col{
+    min-width:250px;
+    scroll-snap-align:start;
+    display:flex;
+    flex-direction:column;
+    justify-content:space-around;
+    gap:18px;
+  }
+  .round-col h3{
+    text-align:center;
+    font-size:.95rem;
+    color:var(--gold);
+    text-transform:uppercase;
+    letter-spacing:.14em;
+    margin-bottom:6px;
+  }
+  .match{
+    background:var(--paper);
+    border-radius:6px;
+    box-shadow:var(--shadow);
+    padding:10px;
+    position:relative;
+  }
+  .match::before{
+    content:"";
+    position:absolute; top:-6px; left:14px; transform:rotate(-6deg);
+    width:20px; height:11px;
+    background:repeating-linear-gradient(45deg,#8a6d3b,#8a6d3b 3px,#6f5527 3px,#6f5527 6px);
+    border-radius:2px;
+    opacity:.7;
+  }
+  .slot{
+    display:flex; align-items:center; gap:8px;
+    padding:5px 4px;
+    border-radius:4px;
+    color:var(--ink);
+    font-size:.88rem;
+  }
+  .slot + .slot{border-top:1px dashed var(--paper-line);}
+  .swatch{width:9px; height:9px; border-radius:50%; flex:0 0 auto;}
+  .flag{font-size:1rem;}
+  .team-name{flex:1; min-width:0;}
+  .participant{
+    font-size:.72rem; color:var(--ink-dim); display:block;
+  }
+  .slot.winner .team-name{font-weight:700;}
+  .slot.winner{background:rgba(63,138,82,.14);}
+  .slot.loser{opacity:.65;}
+  .slot.loser .team-name{position:relative; display:inline-block;}
+  .slot.loser .team-name::after{
+    content:"";
+    position:absolute; left:-2px; right:-2px; top:52%;
+    height:2px; background:var(--pen-red);
+    transform:rotate(-2.5deg);
+  }
+  .slot.tbd .team-name{color:var(--ink-dim); font-style:italic;}
+  .slot.tbd .flag{opacity:.3;}
+
+  /* PARTICIPANTS LIST */
+  section.participants{padding-bottom:60px;}
+  .paper-panel{
+    background:var(--paper);
+    color:var(--ink);
+    border-radius:10px;
+    box-shadow:var(--shadow);
+    padding:22px 20px;
+  }
+  .plist{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:0 28px;
+  }
+  .prow{
+    display:flex; align-items:baseline; gap:8px;
+    padding:7px 2px;
+    border-bottom:1px dashed var(--paper-line);
+    font-size:.94rem;
+  }
+  .prow .num{
+    font-family:'JetBrains Mono',monospace; color:var(--ink-dim); font-size:.75rem; width:20px; flex:0 0 auto;
+  }
+  .prow .flag{font-size:.95rem;}
+  .prow .name{font-weight:700;}
+  .prow .dash{color:var(--ink-dim);}
+  .prow .team{flex:1;}
+  .prow.out{opacity:.55;}
+  .prow.out .team, .prow.out .name{position:relative;}
+  .prow.out .team::after{
+    content:"";
+    position:absolute; left:-2px; right:-2px; top:55%;
+    height:2px; background:var(--pen-red); transform:rotate(-1.5deg);
+  }
+  .prow.flagme{outline:1px dashed var(--gold); border-radius:4px; background:rgba(232,185,74,.15);}
+  .prow .warn{color:var(--pen-red); font-size:.72rem; margin-left:4px;}
+
+  footer{
+    text-align:center;
+    padding:30px 20px 50px;
+    color:var(--chalk-dim);
+    font-size:.8rem;
+  }
+  footer code{
+    background:rgba(244,241,230,.08);
+    padding:2px 6px;
+    border-radius:4px;
+    color:var(--gold);
+  }
+
+  @media (max-width:640px){
+    .prize-row{grid-template-columns:1fr 1fr;}
+    .plist{grid-template-columns:1fr;}
+    header.board-header{padding:32px 0 22px;}
+  }
+</style>
+</head>
+<body>
+
+<header class="board-header">
+  <div class="wrap">
+    <div class="eyebrow">The Hop Box · Sweepstake</div>
+    <h1>World Cup 2026</h1>
+    <p class="sub">32 teams. 32 names on the sheet behind the bar. One winner.</p>
+    <div class="updated-badge" id="updatedBadge">Last updated —</div>
+  </div>
+</header>
+
+<div class="wrap">
+
+  <section class="champion-banner" id="championBanner" hidden>
+    <div class="trophy">🏆</div>
+    <div class="champ-label">Champion</div>
+    <div class="champ-team" id="champTeam"></div>
+    <div class="champ-holder" id="champHolder"></div>
+  </section>
+
+  <section class="prizes">
+    <div class="section-label"><h2>Prizes</h2><div class="rule"></div></div>
+    <div class="prize-row" id="prizeRow"></div>
+  </section>
+
+  <section class="bracket" id="bracketSection">
+    <div class="section-label"><h2>The Bracket</h2><div class="rule"></div><span class="count" id="bracketStatus"></span></div>
+    <div class="bracket-scroll" id="bracketScroll"></div>
+  </section>
+
+  <section class="participants">
+    <div class="section-label"><h2>All 32</h2><div class="rule"></div><span class="count" id="aliveCount"></span></div>
+    <div class="paper-panel">
+      <div class="plist" id="participantList"></div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* ============================================================
+   TEAM DATA — flag emoji, an accent colour, and the code shown
+   if the emoji fails to render on someone's device.
+   ============================================================ */
+const TEAMS = {
+  "Canada":       {flag:"🇨🇦", color:"#D80621"},
+  "South Africa": {flag:"🇿🇦", color:"#007A4D"},
+  "Brazil":       {flag:"🇧🇷", color:"#FFDF00"},
+  "Japan":        {flag:"🇯🇵", color:"#0033A0"},
+  "Germany":      {flag:"🇩🇪", color:"#DD0000"},
+  "Paraguay":     {flag:"🇵🇾", color:"#D52B1E"},
+  "Netherlands":  {flag:"🇳🇱", color:"#FF6600"},
+  "Morocco":      {flag:"🇲🇦", color:"#C1272D"},
+  "Ivory Coast":  {flag:"🇨🇮", color:"#FF8200"},
+  "Norway":       {flag:"🇳🇴", color:"#EF2B2D"},
+  "France":       {flag:"🇫🇷", color:"#0055A4"},
+  "Sweden":       {flag:"🇸🇪", color:"#FECC00"},
+  "Mexico":       {flag:"🇲🇽", color:"#006847"},
+  "Ecuador":      {flag:"🇪🇨", color:"#FFD100"},
+  "England":      {flag:"🏴", color:"#CE1124"},
+  "DR Congo":     {flag:"🇨🇩", color:"#007FFF"},
+  "Belgium":      {flag:"🇧🇪", color:"#ED2939"},
+  "Senegal":      {flag:"🇸🇳", color:"#00853F"},
+  "USA":          {flag:"🇺🇸", color:"#0A3161"},
+  "Bosnia":       {flag:"🇧🇦", color:"#002F6C"},
+  "Spain":        {flag:"🇪🇸", color:"#C60B1E"},
+  "Austria":      {flag:"🇦🇹", color:"#ED2939"},
+  "Switzerland":  {flag:"🇨🇭", color:"#FF0000"},
+  "Algeria":      {flag:"🇩🇿", color:"#006233"},
+  "Portugal":     {flag:"🇵🇹", color:"#CC0000"},
+  "Croatia":      {flag:"🇭🇷", color:"#FF0000"},
+  "Argentina":    {flag:"🇦🇷", color:"#75AADB"},
+  "Cape Verde":   {flag:"🇨🇻", color:"#003893"},
+  "Colombia":     {flag:"🇨🇴", color:"#FFCC00"},
+  "Ghana":        {flag:"🇬🇭", color:"#CE1126"},
+  "Australia":    {flag:"🇦🇺", color:"#00843D"},
+  "Egypt":        {flag:"🇪🇬", color:"#C8102E"},
+};
+
+/* ============================================================
+   THE SHEET — position, participant name, team.
+   Rows 4 & 13 both read "Belgium" from the handwritten sheet —
+   see the on-page note. Bosnia auto-marked OUT (USA won 2-0).
+   ============================================================ */
+const SWEEPSTAKE = [
+  {n:1,  name:"Dionne",        team:"France"},
+  {n:2,  name:"Flan",          team:"Algeria"},
+  {n:3,  name:"Clive",         team:"Ecuador"},
+  {n:4,  name:"Jason",         team:"Belgium"},
+  {n:5,  name:"Stuart",        team:"Switzerland"},
+  {n:6,  name:"Warren",        team:"Cape Verde"},
+  {n:7,  name:"Brad",          team:"South Africa"},
+  {n:8,  name:"Elliot",        team:"Paraguay"},
+  {n:9,  name:"Dave",          team:"Australia"},
+  {n:10, name:"Tracey/Nigel",  team:"Spain"},
+  {n:11, name:"Chris",         team:"Mexico"},
+  {n:12, name:"Andi",          team:"Brazil"},
+  {n:13, name:"Emma HP",       team:"Belgium"},
+  {n:14, name:"Mandy",         team:"Ivory Coast"},
+  {n:15, name:"Jan",           team:"Ghana"},
+  {n:16, name:"Tom",           team:"Bosnia"},
+  {n:17, name:"Johny",         team:"Japan"},
+  {n:18, name:"Adam",          team:"Senegal"},
+  {n:19, name:"Nick",          team:"Portugal"},
+  {n:20, name:"Mike (Nick)",   team:"Argentina"},
+  {n:21, name:"Debsy",         team:"USA"},
+  {n:22, name:"Mike GSK",      team:"Egypt"},
+  {n:23, name:"Alf/Sam",       team:"Netherlands"},
+  {n:24, name:"Mark MW",       team:"Sweden"},
+  {n:25, name:"Geoff",         team:"Colombia"},
+  {n:26, name:"Sam/Michelle",  team:"England"},
+  {n:27, name:"Leo",           team:"Austria"},
+  {n:28, name:"Ali",           team:"Morocco"},
+  {n:29, name:"Nora",          team:"DR Congo"},
+  {n:30, name:"Kev",           team:"Croatia"},
+  {n:31, name:"Mark",          team:"Germany"},
+  {n:32, name:"Jules",         team:"Norway"},
+];
+
+/* ============================================================
+   BRACKET STRUCTURE — real Round of 32 draw. Each match has an
+   id, the two teams, and a "winner" you fill in as results come
+   in. Leave winner as null until it's known. Everything downstream
+   (R16, QF, SF, Final, 3rd place) is worked out automatically
+   from these.
+   ============================================================ */
+const RESULTS = {
+  round32: [
+    {id:"m1",  team1:"Canada",      team2:"South Africa", winner:"Canada"},
+    {id:"m2",  team1:"Brazil",      team2:"Japan",         winner:"Brazil"},
+    {id:"m3",  team1:"Germany",     team2:"Paraguay",      winner:"Paraguay"},
+    {id:"m4",  team1:"Netherlands", team2:"Morocco",       winner:"Morocco"},
+    {id:"m5",  team1:"Ivory Coast", team2:"Norway",        winner:"Norway"},
+    {id:"m6",  team1:"France",      team2:"Sweden",        winner:"France"},
+    {id:"m7",  team1:"Mexico",      team2:"Ecuador",       winner:"Mexico"},
+    {id:"m8",  team1:"England",     team2:"DR Congo",      winner:"England"},
+    {id:"m9",  team1:"Belgium",     team2:"Senegal",       winner:"Belgium"},
+    {id:"m10", team1:"USA",         team2:"Bosnia",        winner:"USA"},
+    {id:"m11", team1:"Spain",       team2:"Austria",       winner:"Spain"},
+    {id:"m12", team1:"Switzerland", team2:"Algeria",       winner:"Switzerland"},
+    {id:"m13", team1:"Portugal",    team2:"Croatia",       winner:"Portugal"},
+    {id:"m14", team1:"Argentina",   team2:"Cape Verde",    winner:null},
+    {id:"m15", team1:"Colombia",    team2:"Ghana",         winner:null},
+    {id:"m16", team1:"Australia",   team2:"Egypt",         winner:null},
+  ],
+  // Each round-of-16 match names which two round-of-32 matches feed it
+  round16: [
+    {id:"r16-1", from:["m3","m6"],   winner:null},
+    {id:"r16-2", from:["m1","m4"],   winner:null},
+    {id:"r16-3", from:["m2","m5"],   winner:null},
+    {id:"r16-4", from:["m7","m8"],   winner:null},
+    {id:"r16-5", from:["m11","m13"], winner:null},
+    {id:"r16-6", from:["m9","m10"],  winner:null},
+    {id:"r16-7", from:["m14","m16"], winner:null},
+    {id:"r16-8", from:["m12","m15"], winner:null},
+  ],
+  quarterfinal: [
+    {id:"qf-1", from:["r16-1","r16-2"], winner:null},
+    {id:"qf-2", from:["r16-5","r16-6"], winner:null},
+    {id:"qf-3", from:["r16-3","r16-4"], winner:null},
+    {id:"qf-4", from:["r16-7","r16-8"], winner:null},
+  ],
+  semifinal: [
+    {id:"sf-1", from:["qf-1","qf-2"], winner:null},
+    {id:"sf-2", from:["qf-3","qf-4"], winner:null},
+  ],
+  final: [
+    {id:"final", from:["sf-1","sf-2"], winner:null},
+  ],
+};
+
+const LAST_UPDATED = "3 July 2026";
+
+/* ============================================================
+   RENDERING — you shouldn't need to touch anything below here.
+   ============================================================ */
+function teamInfo(name){
+  return TEAMS[name] || {flag:"🏳️", color:"#999"};
+}
+function participantFor(team){
+  const rows = SWEEPSTAKE.filter(r=>r.team===team);
+  if(rows.length===0) return null;
+  return rows.map(r=>r.name).join(" / ");
+}
+function winnerOf(match){ return match.winner; }
+
+function resolveTeamsForMatch(round, match){
+  if(match.team1) return [match.team1, match.team2];
+  const [aId,bId] = match.from;
+  const a = findMatch(aId), b = findMatch(bId);
+  return [winnerOf(a), winnerOf(b)];
+}
+function findMatch(id){
+  for(const key of Object.keys(RESULTS)){
+    const m = RESULTS[key].find(x=>x.id===id);
+    if(m) return m;
+  }
+  return null;
+}
+
+function renderSlot(teamName, isWinnerKnown, matchWinner){
+  if(!teamName){
+    return `<div class="slot tbd"><span class="flag">🏳️</span><span class="team-name">TBD</span></div>`;
+  }
+  const info = teamInfo(teamName);
+  const p = participantFor(teamName);
+  let cls = "slot";
+  if(isWinnerKnown){
+    cls += (teamName===matchWinner) ? " winner" : " loser";
+  }
+  return `<div class="${cls}">
+    <span class="swatch" style="background:${info.color}"></span>
+    <span class="flag">${info.flag}</span>
+    <span class="team-name">${teamName}${p?`<span class="participant">${p}</span>`:""}</span>
+  </div>`;
+}
+
+function roundComplete(key){
+  return RESULTS[key].every(m => !!m.winner);
+}
+function tournamentComplete(){
+  return roundComplete("final");
+}
+
+function renderBracket(){
+  const roundDefs = [
+    {key:"round32", label:"Round of 32"},
+    {key:"round16", label:"Round of 16"},
+    {key:"quarterfinal", label:"Quarter‑final"},
+    {key:"semifinal", label:"Semi‑final"},
+    {key:"final", label:"Final"},
+  ];
+  const section = document.getElementById("bracketSection");
+  const status = document.getElementById("bracketStatus");
+
+  if(tournamentComplete()){
+    // Once there's a champion, the bracket has done its job — the
+    // champion banner and prize tickets tell the story from here.
+    section.hidden = true;
+    return;
+  }
+  section.hidden = false;
+
+  // Only show rounds that are still undecided (in progress or upcoming).
+  // Rounds that finished completely drop off so the page always shows
+  // what's live right now, not history.
+  const visible = roundDefs.filter(rd => !roundComplete(rd.key));
+  const liveRound = visible[0];
+  status.textContent = liveRound ? `In progress: ${liveRound.label}` : "";
+
+  const container = document.getElementById("bracketScroll");
+  container.innerHTML = "";
+  visible.forEach(rd=>{
+    const col = document.createElement("div");
+    col.className = "round-col";
+    let html = `<h3>${rd.label}</h3>`;
+    RESULTS[rd.key].forEach(match=>{
+      const [t1,t2] = resolveTeamsForMatch(rd.key, match);
+      const decided = !!match.winner; // only mark winner/loser once THIS match has been played
+      html += `<div class="match">
+        ${renderSlot(t1, decided, match.winner)}
+        ${renderSlot(t2, decided, match.winner)}
+      </div>`;
+    });
+    col.innerHTML = html;
+    container.appendChild(col);
+  });
+}
+
+function renderPrizes(){
+  const finalMatch = RESULTS.final[0];
+  const sf1 = RESULTS.semifinal[0], sf2 = RESULTS.semifinal[1];
+  const [ft1,ft2] = resolveTeamsForMatch("final", finalMatch);
+  const champion = finalMatch.winner;
+  const runnerUp = champion ? (champion===ft1?ft2:ft1) : null;
+
+  const [s1a,s1b] = resolveTeamsForMatch("semifinal", sf1);
+  const [s2a,s2b] = resolveTeamsForMatch("semifinal", sf2);
+  const sf1Loser = sf1.winner ? (sf1.winner===s1a?s1b:s1a) : null;
+  const sf2Loser = sf2.winner ? (sf2.winner===s2a?s2b:s2a) : null;
+
+  const prizes = [
+    {place:"Champion", amount:"£200", stage:"Winner of the Final", team:champion},
+    {place:"Runner-up", amount:"£70", stage:"Loses the Final", team:runnerUp},
+    {place:"3rd place", amount:"£30", stage:"Loses a semi-final", team:sf1Loser},
+    {place:"4th place", amount:"£20", stage:"Loses a semi-final", team:sf2Loser},
+  ];
+
+  const row = document.getElementById("prizeRow");
+  row.innerHTML = prizes.map(p=>{
+    const info = p.team ? teamInfo(p.team) : null;
+    const part = p.team ? participantFor(p.team) : null;
+    return `<div class="ticket">
+      <div class="place">${p.place}</div>
+      <div class="amount">${p.amount}</div>
+      <div class="stage">${p.stage}</div>
+      <div class="holder ${p.team?"":"tbd"}">
+        ${p.team ? `${info.flag} ${p.team} — ${part||"?"}` : "To be decided"}
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function renderParticipants(){
+  const list = document.getElementById("participantList");
+  const outTeams = new Set();
+  // any team that lost a completed round-of-32 match is out
+  RESULTS.round32.forEach(m=>{
+    if(m.winner){
+      const loser = (m.winner===m.team1) ? m.team2 : m.team1;
+      outTeams.add(loser);
+    }
+  });
+  // manual overrides for teams marked lost on the physical sheet
+  // (kept in sync with RESULTS.round32 above — Bosnia already covered by m10)
+
+  list.innerHTML = SWEEPSTAKE.map(r=>{
+    const info = teamInfo(r.team);
+    const isOut = outTeams.has(r.team);
+    return `<div class="prow ${isOut?"out":""}">
+      <span class="num">${String(r.n).padStart(2,"0")}</span>
+      <span class="flag">${info.flag}</span>
+      <span class="name">${r.name}</span>
+      <span class="dash">—</span>
+      <span class="team">${r.team}</span>
+    </div>`;
+  }).join("");
+
+  const remaining = 32 - outTeams.size;
+  document.getElementById("aliveCount").textContent = `${remaining} of 32 still in`;
+}
+
+function renderChampion(){
+  const champion = RESULTS.final[0].winner;
+  const banner = document.getElementById("championBanner");
+  if(!champion){
+    banner.hidden = true;
+    return;
+  }
+  const info = teamInfo(champion);
+  const part = participantFor(champion);
+  document.getElementById("champTeam").textContent = `${info.flag} ${champion}`;
+  document.getElementById("champHolder").textContent = part ? `${part} takes the £200` : "";
+  banner.hidden = false;
+}
+
+document.getElementById("updatedBadge").textContent = `Last updated ${LAST_UPDATED}`;
+renderChampion();
+renderPrizes();
+renderBracket();
+renderParticipants();
+</script>
+</body>
+</html>
