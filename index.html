@@ -395,82 +395,76 @@ const SWEEPSTAKE = [
 /* ============================================================
    RESULTS — THE ONLY THING YOU EVER EDIT.
 
-   Just add a team's name to this list the moment they're knocked
-   out. That's it. Don't touch anything else on this page — the
-   bracket below is fixed (it's the real draw), and it works out
-   who's still alive, who plays who next, the prize tickets and
-   the champion banner purely from this list.
-
-   Order doesn't matter. Just append as results come in.
+   Add a team's name under the round they lost in. That's the
+   only reason this is split by round rather than one big list:
+   a team like Canada wins its Round of 32 match, then later
+   loses in the Round of 16 — a single flat list can't tell which
+   of those two rounds it went out in, so it has to be bucketed.
+   Nothing else here changes what you do day to day: a team loses
+   a match, you add its name under that round, done.
    ============================================================ */
-const ELIMINATED_TEAMS = [
-  "South Africa",   // lost to Canada, R32
-  "Japan",          // lost to Brazil, R32
-  "Germany",        // lost to Paraguay, R32
-  "Netherlands",    // lost to Morocco, R32
-  "Ivory Coast",    // lost to Norway, R32
-  "Sweden",         // lost to France, R32
-  "Ecuador",        // lost to Mexico, R32
-  "DR Congo",       // lost to England, R32
-  "Senegal",        // lost to Belgium, R32
-  "Bosnia",         // lost to USA, R32
-  "Austria",        // lost to Spain, R32
-  "Algeria",        // lost to Switzerland, R32
-  "Croatia",        // lost to Portugal, R32
-  "Cape Verde",     // lost to Argentina, R32
-  "Ghana",          // lost to Colombia, R32
-  "Australia",      // lost to Egypt, R32
-  "Canada",         // lost to Morocco, R16
-];
+const ELIMINATED = {
+  round32: [
+    "South Africa", "Japan", "Germany", "Netherlands", "Ivory Coast",
+    "Sweden", "Ecuador", "DR Congo", "Senegal", "Bosnia", "Austria",
+    "Algeria", "Croatia", "Cape Verde", "Ghana", "Australia",
+  ],
+  round16: [
+    "Canada",   // lost to Morocco
+  ],
+  quarterfinal: [],
+  semifinal: [],
+  final: [],
+};
 
 /* ============================================================
    BRACKET STRUCTURE — the real Round of 32 draw. This never
    needs editing. Each match either has two fixed teams (Round
    of 32) or names the two earlier matches that feed it — the
-   winner of each is worked out from ELIMINATED_TEAMS above.
+   winner of each is worked out from ELIMINATED above.
    ============================================================ */
 const RESULTS = {
   round32: [
-    {id:"m1",  team1:"Canada",      team2:"South Africa"},
-    {id:"m2",  team1:"Brazil",      team2:"Japan"},
-    {id:"m3",  team1:"Germany",     team2:"Paraguay"},
-    {id:"m4",  team1:"Netherlands", team2:"Morocco"},
-    {id:"m5",  team1:"Ivory Coast", team2:"Norway"},
-    {id:"m6",  team1:"France",      team2:"Sweden"},
-    {id:"m7",  team1:"Mexico",      team2:"Ecuador"},
-    {id:"m8",  team1:"England",     team2:"DR Congo"},
-    {id:"m9",  team1:"Belgium",     team2:"Senegal"},
-    {id:"m10", team1:"USA",         team2:"Bosnia"},
-    {id:"m11", team1:"Spain",       team2:"Austria"},
-    {id:"m12", team1:"Switzerland", team2:"Algeria"},
-    {id:"m13", team1:"Portugal",    team2:"Croatia"},
-    {id:"m14", team1:"Argentina",   team2:"Cape Verde"},
-    {id:"m15", team1:"Colombia",    team2:"Ghana"},
-    {id:"m16", team1:"Australia",   team2:"Egypt"},
+    {id:"m1",  round:"round32", team1:"Canada",      team2:"South Africa"},
+    {id:"m2",  round:"round32", team1:"Brazil",      team2:"Japan"},
+    {id:"m3",  round:"round32", team1:"Germany",     team2:"Paraguay"},
+    {id:"m4",  round:"round32", team1:"Netherlands", team2:"Morocco"},
+    {id:"m5",  round:"round32", team1:"Ivory Coast", team2:"Norway"},
+    {id:"m6",  round:"round32", team1:"France",      team2:"Sweden"},
+    {id:"m7",  round:"round32", team1:"Mexico",      team2:"Ecuador"},
+    {id:"m8",  round:"round32", team1:"England",     team2:"DR Congo"},
+    {id:"m9",  round:"round32", team1:"Belgium",     team2:"Senegal"},
+    {id:"m10", round:"round32", team1:"USA",         team2:"Bosnia"},
+    {id:"m11", round:"round32", team1:"Spain",       team2:"Austria"},
+    {id:"m12", round:"round32", team1:"Switzerland", team2:"Algeria"},
+    {id:"m13", round:"round32", team1:"Portugal",    team2:"Croatia"},
+    {id:"m14", round:"round32", team1:"Argentina",   team2:"Cape Verde"},
+    {id:"m15", round:"round32", team1:"Colombia",    team2:"Ghana"},
+    {id:"m16", round:"round32", team1:"Australia",   team2:"Egypt"},
   ],
   // Each round-of-16 match names which two round-of-32 matches feed it
   round16: [
-    {id:"r16-1", from:["m3","m6"]},
-    {id:"r16-2", from:["m1","m4"]},
-    {id:"r16-3", from:["m2","m5"]},
-    {id:"r16-4", from:["m7","m8"]},
-    {id:"r16-5", from:["m11","m13"]},
-    {id:"r16-6", from:["m9","m10"]},
-    {id:"r16-7", from:["m14","m16"]},
-    {id:"r16-8", from:["m12","m15"]},
+    {id:"r16-1", round:"round16", from:["m3","m6"]},
+    {id:"r16-2", round:"round16", from:["m1","m4"]},
+    {id:"r16-3", round:"round16", from:["m2","m5"]},
+    {id:"r16-4", round:"round16", from:["m7","m8"]},
+    {id:"r16-5", round:"round16", from:["m11","m13"]},
+    {id:"r16-6", round:"round16", from:["m9","m10"]},
+    {id:"r16-7", round:"round16", from:["m14","m16"]},
+    {id:"r16-8", round:"round16", from:["m12","m15"]},
   ],
   quarterfinal: [
-    {id:"qf-1", from:["r16-1","r16-2"]},
-    {id:"qf-2", from:["r16-5","r16-6"]},
-    {id:"qf-3", from:["r16-3","r16-4"]},
-    {id:"qf-4", from:["r16-7","r16-8"]},
+    {id:"qf-1", round:"quarterfinal", from:["r16-1","r16-2"]},
+    {id:"qf-2", round:"quarterfinal", from:["r16-5","r16-6"]},
+    {id:"qf-3", round:"quarterfinal", from:["r16-3","r16-4"]},
+    {id:"qf-4", round:"quarterfinal", from:["r16-7","r16-8"]},
   ],
   semifinal: [
-    {id:"sf-1", from:["qf-1","qf-2"]},
-    {id:"sf-2", from:["qf-3","qf-4"]},
+    {id:"sf-1", round:"semifinal", from:["qf-1","qf-2"]},
+    {id:"sf-2", round:"semifinal", from:["qf-3","qf-4"]},
   ],
   final: [
-    {id:"final", from:["sf-1","sf-2"]},
+    {id:"final", round:"final", from:["sf-1","sf-2"]},
   ],
 };
 
@@ -494,9 +488,6 @@ function findMatch(id){
   }
   return null;
 }
-function isEliminated(team){
-  return ELIMINATED_TEAMS.includes(team);
-}
 // The two teams in a match — either fixed (Round of 32) or worked
 // out from whoever won the two matches that feed into it.
 function resolveTeamsForMatch(match){
@@ -506,20 +497,29 @@ function resolveTeamsForMatch(match){
   return [winnerOf(a), winnerOf(b)];
 }
 // A match is decided once both its teams are known AND exactly one
-// of them is in ELIMINATED_TEAMS — that team lost, the other advances.
+// of them was eliminated in THIS match's round.
 function winnerOf(match){
   const [t1,t2] = resolveTeamsForMatch(match);
   if(!t1 || !t2) return null;
-  const e1 = isEliminated(t1), e2 = isEliminated(t2);
+  const list = ELIMINATED[match.round] || [];
+  const e1 = list.includes(t1), e2 = list.includes(t2);
   if(e1 && !e2) return t2;
   if(e2 && !e1) return t1;
   return null; // not played yet
 }
 function loserOf(match){
-  const [t1,t2] = resolveTeamsForMatch(match);
   const winner = winnerOf(match);
   if(!winner) return null;
+  const [t1,t2] = resolveTeamsForMatch(match);
   return (winner===t1) ? t2 : t1;
+}
+// Every team eliminated so far, across every round — used to
+// strike a team through in the full list of 32.
+function allEliminatedTeams(){
+  return new Set([
+    ...ELIMINATED.round32, ...ELIMINATED.round16,
+    ...ELIMINATED.quarterfinal, ...ELIMINATED.semifinal, ...ELIMINATED.final,
+  ]);
 }
 
 function renderSlot(teamName, decided, matchWinner){
@@ -626,7 +626,7 @@ function renderPrizes(){
 
 function renderParticipants(){
   const list = document.getElementById("participantList");
-  const outTeams = new Set(ELIMINATED_TEAMS);
+  const outTeams = allEliminatedTeams();
 
   list.innerHTML = SWEEPSTAKE.map(r=>{
     const info = teamInfo(r.team);
