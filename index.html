@@ -31,15 +31,10 @@
     line-height:1.4;
     -webkit-font-smoothing:antialiased;
   }
-  @font-face{ /* graceful fallback if no network fonts load */ }
   h1,h2,h3{font-family:'Anton','Oswald',Impact,'Arial Narrow',sans-serif; letter-spacing:.02em; margin:0;}
   .mono{font-family:'JetBrains Mono','Courier New',monospace;}
-
   a{color:var(--gold);}
-
   .wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
-
-  /* HEADER */
   header.board-header{
     padding:44px 0 30px;
     text-align:center;
@@ -75,8 +70,6 @@
     color:var(--gold);
     letter-spacing:.05em;
   }
-
-  /* CHAMPION BANNER */
   .champion-banner{
     margin-top:34px;
     text-align:center;
@@ -99,8 +92,6 @@
   .champion-banner .champ-holder{
     margin-top:6px; color:var(--chalk-dim); font-style:italic; font-size:1rem;
   }
-
-  /* PRIZES */
   section.prizes{padding:38px 0 8px;}
   .prize-row{
     display:grid;
@@ -154,8 +145,6 @@
     font-size:.95rem;
   }
   .ticket .holder.tbd{color:var(--ink-dim); font-weight:400; font-style:italic;}
-
-  /* SECTION LABELS */
   .section-label{
     display:flex; align-items:center; gap:12px;
     margin:46px 0 18px;
@@ -165,8 +154,6 @@
   .section-label .count{
     font-family:'JetBrains Mono',monospace; font-size:.75rem; color:var(--chalk-dim);
   }
-
-  /* BRACKET */
   section.bracket{padding-bottom:10px;}
   .bracket-scroll{
     display:flex;
@@ -232,8 +219,6 @@
   }
   .slot.tbd .team-name{color:var(--ink-dim); font-style:italic;}
   .slot.tbd .flag{opacity:.3;}
-
-  /* PARTICIPANTS LIST */
   section.participants{padding-bottom:60px;}
   .paper-panel{
     background:var(--paper);
@@ -267,7 +252,6 @@
     position:absolute; left:-2px; right:-2px; top:55%;
     height:2px; background:var(--pen-red); transform:rotate(-1.5deg);
   }
-
   @media (max-width:640px){
     .prize-row{grid-template-columns:1fr 1fr;}
     .plist{grid-template-columns:1fr;}
@@ -315,10 +299,6 @@
 </div>
 
 <script>
-/* ============================================================
-   TEAM DATA — flag emoji, an accent colour, and the code shown
-   if the emoji fails to render on someone's device.
-   ============================================================ */
 const TEAMS = {
   "Canada":       {flag:"🇨🇦", color:"#D80621"},
   "South Africa": {flag:"🇿🇦", color:"#007A4D"},
@@ -354,9 +334,6 @@ const TEAMS = {
   "Egypt":        {flag:"🇪🇬", color:"#C8102E"},
 };
 
-/* ============================================================
-   THE SHEET — position, participant name, team.
-   ============================================================ */
 const SWEEPSTAKE = [
   {n:1,  name:"Dionne",        team:"France"},
   {n:2,  name:"Flan",          team:"Algeria"},
@@ -373,7 +350,7 @@ const SWEEPSTAKE = [
   {n:13, name:"Emma HP",       team:"Canada"},
   {n:14, name:"Mandy",         team:"Ivory Coast"},
   {n:15, name:"Jan",           team:"Ghana"},
-  {n:16, name:"Jules",           team:"Norway"},
+  {n:16, name:"Jules",         team:"Norway"},
   {n:17, name:"Johny",         team:"Japan"},
   {n:18, name:"Adam",          team:"Senegal"},
   {n:19, name:"Nick",          team:"Portugal"},
@@ -389,20 +366,9 @@ const SWEEPSTAKE = [
   {n:29, name:"Nora",          team:"DR Congo"},
   {n:30, name:"Kev",           team:"Croatia"},
   {n:31, name:"Mark",          team:"Germany"},
-  {n:32, name:"Tom",         team:"Bosnia"},
+  {n:32, name:"Tom",           team:"Bosnia"},
 ];
 
-/* ============================================================
-   RESULTS — THE ONLY THING YOU EVER EDIT.
-
-   Add a team's name under the round they lost in. That's the
-   only reason this is split by round rather than one big list:
-   a team like Canada wins its Round of 32 match, then later
-   loses in the Round of 16 — a single flat list can't tell which
-   of those two rounds it went out in, so it has to be bucketed.
-   Nothing else here changes what you do day to day: a team loses
-   a match, you add its name under that round, done.
-   ============================================================ */
 const ELIMINATED = {
   round32: [
     "South Africa", "Japan", "Germany", "Netherlands", "Ivory Coast",
@@ -412,17 +378,15 @@ const ELIMINATED = {
   round16: [
     "Canada", "Paraguay", "Brazil","Mexico", "Portugal", "USA", "Egypt", "Colombia", 
   ],
-  quarterfinal: ["Morocco", "Belgium", "Norway", "Switzerland", ],
-  semifinal: ["France", ],
+  quarterfinal: ["Morocco", "Belgium", "Norway", "Switzerland"],
+  semifinal: ["France"],
+  // Winner of the actual 3rd-place play-off gets 3rd; whoever they
+  // beat gets 4th. Leave empty until that match has been played —
+  // reaching the semis and losing does NOT decide 3rd/4th on its own.
+  thirdPlace: [],
   final: [],
 };
 
-/* ============================================================
-   BRACKET STRUCTURE — the real Round of 32 draw. This never
-   needs editing. Each match either has two fixed teams (Round
-   of 32) or names the two earlier matches that feed it — the
-   winner of each is worked out from ELIMINATED above.
-   ============================================================ */
 const RESULTS = {
   round32: [
     {id:"m1",  round:"round32", team1:"Canada",      team2:"South Africa"},
@@ -442,7 +406,6 @@ const RESULTS = {
     {id:"m15", round:"round32", team1:"Colombia",    team2:"Ghana"},
     {id:"m16", round:"round32", team1:"Australia",   team2:"Egypt"},
   ],
-  // Each round-of-16 match names which two round-of-32 matches feed it
   round16: [
     {id:"r16-1", round:"round16", from:["m3","m6"]},
     {id:"r16-2", round:"round16", from:["m1","m4"]},
@@ -466,13 +429,16 @@ const RESULTS = {
   final: [
     {id:"final", round:"final", from:["sf-1","sf-2"]},
   ],
+  // The two beaten semi-finalists play each other for 3rd place.
+  // fromLosers:true means "use the LOSER of each of these matches",
+  // not the winner — the only match on this page that works that way.
+  thirdPlace: [
+    {id:"3rd", round:"thirdPlace", from:["sf-1","sf-2"], fromLosers:true},
+  ],
 };
 
 const LAST_UPDATED = "4 July 2026";
 
-/* ============================================================
-   RENDERING — you shouldn't need to touch anything below here.
-   ============================================================ */
 function teamInfo(name){
   return TEAMS[name] || {flag:"🏳️", color:"#999"};
 }
@@ -488,16 +454,13 @@ function findMatch(id){
   }
   return null;
 }
-// The two teams in a match — either fixed (Round of 32) or worked
-// out from whoever won the two matches that feed into it.
 function resolveTeamsForMatch(match){
   if(match.team1) return [match.team1, match.team2];
   const [aId,bId] = match.from;
   const a = findMatch(aId), b = findMatch(bId);
+  if(match.fromLosers) return [loserOf(a), loserOf(b)];
   return [winnerOf(a), winnerOf(b)];
 }
-// A match is decided once both its teams are known AND exactly one
-// of them was eliminated in THIS match's round.
 function winnerOf(match){
   const [t1,t2] = resolveTeamsForMatch(match);
   if(!t1 || !t2) return null;
@@ -505,7 +468,7 @@ function winnerOf(match){
   const e1 = list.includes(t1), e2 = list.includes(t2);
   if(e1 && !e2) return t2;
   if(e2 && !e1) return t1;
-  return null; // not played yet
+  return null;
 }
 function loserOf(match){
   const winner = winnerOf(match);
@@ -513,12 +476,10 @@ function loserOf(match){
   const [t1,t2] = resolveTeamsForMatch(match);
   return (winner===t1) ? t2 : t1;
 }
-// Every team eliminated so far, across every round — used to
-// strike a team through in the full list of 32.
 function allEliminatedTeams(){
   return new Set([
-    ...ELIMINATED.round32, ...ELIMINATED.round16,
-    ...ELIMINATED.quarterfinal, ...ELIMINATED.semifinal, ...ELIMINATED.final,
+    ...ELIMINATED.round32, ...ELIMINATED.round16, ...ELIMINATED.quarterfinal,
+    ...ELIMINATED.semifinal, ...ELIMINATED.final, ...ELIMINATED.thirdPlace,
   ]);
 }
 
@@ -543,7 +504,7 @@ function roundComplete(key){
   return RESULTS[key].every(m => !!winnerOf(m));
 }
 function tournamentComplete(){
-  return roundComplete("final");
+  return roundComplete("final") && roundComplete("thirdPlace");
 }
 
 function renderBracket(){
@@ -552,22 +513,18 @@ function renderBracket(){
     {key:"round16", label:"Round of 16"},
     {key:"quarterfinal", label:"Quarter‑final"},
     {key:"semifinal", label:"Semi‑final"},
+    {key:"thirdPlace", label:"3rd Place Play‑off"},
     {key:"final", label:"Final"},
   ];
   const section = document.getElementById("bracketSection");
   const status = document.getElementById("bracketStatus");
 
   if(tournamentComplete()){
-    // Once there's a champion, the bracket has done its job — the
-    // champion banner and prize tickets tell the story from here.
     section.hidden = true;
     return;
   }
   section.hidden = false;
 
-  // Only show rounds that are still undecided (in progress or upcoming).
-  // Rounds that finished completely drop off so the page always shows
-  // what's live right now, not history.
   const visible = roundDefs.filter(rd => !roundComplete(rd.key));
   const liveRound = visible[0];
   status.textContent = liveRound ? `In progress: ${liveRound.label}` : "";
@@ -581,7 +538,7 @@ function renderBracket(){
     RESULTS[rd.key].forEach(match=>{
       const [t1,t2] = resolveTeamsForMatch(match);
       const winner = winnerOf(match);
-      const decided = !!winner; // only mark winner/loser once THIS match has been played
+      const decided = !!winner;
       html += `<div class="match">
         ${renderSlot(t1, decided, winner)}
         ${renderSlot(t2, decided, winner)}
@@ -594,19 +551,23 @@ function renderBracket(){
 
 function renderPrizes(){
   const finalMatch = RESULTS.final[0];
-  const sf1 = RESULTS.semifinal[0], sf2 = RESULTS.semifinal[1];
+  const thirdPlaceMatch = RESULTS.thirdPlace[0];
   const champion = winnerOf(finalMatch);
   const [ft1,ft2] = resolveTeamsForMatch(finalMatch);
   const runnerUp = champion ? (champion===ft1?ft2:ft1) : null;
 
-  const sf1Loser = loserOf(sf1);
-  const sf2Loser = loserOf(sf2);
+  // 3rd is whoever WINS the play-off between the two semi-final
+  // losers; 4th is whoever loses it. Until that match is played,
+  // both stay "to be decided" even though we already know the two
+  // teams involved.
+  const thirdPlace = winnerOf(thirdPlaceMatch);
+  const fourthPlace = loserOf(thirdPlaceMatch);
 
   const prizes = [
     {place:"Champion", amount:"£200", stage:"Winner of the Final", team:champion},
     {place:"Runner-up", amount:"£70", stage:"Loses the Final", team:runnerUp},
-    {place:"3rd place", amount:"£30", stage:"Loses a semi-final", team:sf1Loser},
-    {place:"4th place", amount:"£20", stage:"Loses a semi-final", team:sf2Loser},
+    {place:"3rd place", amount:"£30", stage:"Wins the 3rd-place play-off", team:thirdPlace},
+    {place:"4th place", amount:"£20", stage:"Loses the 3rd-place play-off", team:fourthPlace},
   ];
 
   const row = document.getElementById("prizeRow");
